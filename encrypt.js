@@ -44,12 +44,9 @@ function caesarCipher(strPlainText, iShift) {
       continue;
     }
 
-
-
     //set bits 6,7,8 to 0  
     //0x1F = 0001 1111
     iLetterPosition = iChar & 0x1F;
-//    console.log("c, position: " + c + ": " + iLetterPosition);
 
     //skip if not a valid letter
     if (iLetterPosition > 26 || iLetterPosition < 1) {
@@ -130,6 +127,38 @@ function getAsciiValue(strPlainText) {
 
 }
 
+function getColumnarTransposition(strPlainText, iColumns) {
+  strCipherText = "";
+
+  cipherArray = new Array();
+  cipherArrayRow = new Array();
+
+  i = 0;
+  for (const char of strPlainText) {
+    c = char;
+
+    cipherArrayRow.push(c)
+
+    i += 1;
+    if (i >= iColumns) {
+      cipherArray.push(cipherArrayRow);
+      cipherArrayRow = new Array();
+      i = 0;
+    }
+  }
+  cipherArray.push(cipherArrayRow);
+
+  for (j = 0; j < iColumns; j++) {
+    for (i = 0; i < cipherArray.length; i++) {
+      if(cipherArray[i].length > j) {
+        strCipherText += cipherArray[i][j];
+      }
+    } 
+  }
+
+  return strCipherText;
+}
+
 function main() {
   args = process.argv;
   switch (args[2]) {
@@ -147,6 +176,10 @@ function main() {
       break;
     case "letterposition":
       str = getLetterPosition(args[3]);
+      console.log(str);
+      break;
+    case "columnartransposition":
+      str = getColumnarTransposition(args[3], args[4]);
       console.log(str);
       break;
     default:
