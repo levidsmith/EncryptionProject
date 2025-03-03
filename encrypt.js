@@ -76,6 +76,60 @@ function caesarCipher(strPlainText, iShift) {
   return strCipherText;
 }
 
+function getLetterPosition(strPlainText) {
+  strCipherText = "";
+
+  for (const char of strPlainText) {
+    c = char;
+    iChar = c.charCodeAt(0);
+
+    //first 5 bits (right to left) are the letter position
+    //6th bit is the case (0 uppercase, 1 lowercase)
+    //7th bit is always 1 for an ASCII letter
+    //8th bit is always 0 for an ASCII letter
+
+    //skip if not a valid letter (7th bit = 1, 8th bit = 0)
+    if ( (iChar & 0xC0) != 0x40) {
+      strCipherText += " ";
+      continue;
+    }
+
+    //set bits 6,7,8 to 0  
+    //0x1F = 0001 1111
+    iLetterPosition = iChar & 0x1F;
+
+    //skip if not a valid letter
+    if (iLetterPosition > 26 || iLetterPosition < 1) {
+      strCipherText += " ";
+      continue;
+    }
+
+    if (strCipherText != "") {
+      strCipherText += " ";
+    }
+    strCipherText += iLetterPosition; 
+  }
+
+  return strCipherText;
+}
+
+function getAsciiValue(strPlainText) {
+  strCipherText = "";
+
+  for (const char of strPlainText) {
+    c = char;
+    iChar = c.charCodeAt(0);
+
+    if (strCipherText != "") {
+      strCipherText += " ";
+    }
+    strCipherText += iChar;
+  }
+
+  return strCipherText;
+
+}
+
 function main() {
   args = process.argv;
   switch (args[2]) {
@@ -85,6 +139,14 @@ function main() {
       break;
     case "caesar":
       str = caesarCipher(args[3], args[4]);
+      console.log(str);
+      break;
+    case "ascii":
+      str = getAsciiValue(args[3]);
+      console.log(str);
+      break;
+    case "letterposition":
+      str = getLetterPosition(args[3]);
       console.log(str);
       break;
     default:
@@ -97,6 +159,8 @@ function showUsage() {
   console.log("Usage:");
   console.log("node encrypt.js upper <text>");
   console.log("node encrypt.js caesar <text> <shift>");
+  console.log("node encrypt.js ascii <text> ");
+  console.log("node encrypt.js letterposition <text> ");
 
 
 }
