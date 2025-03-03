@@ -22,7 +22,13 @@ function makeUppercase(strPlainText) {
 
 function caesarCipher(strPlainText, iShift) {
   strCipherText = "";
+
   iShift = iShift % 26;
+  if (iShift < 0) {
+    console.log("Invalid shift value");
+    return;
+  }
+
   for (const char of strPlainText) {
     c = char;
     iChar = c.charCodeAt(0);
@@ -34,18 +40,28 @@ function caesarCipher(strPlainText, iShift) {
 
     //skip if not a valid letter (7th bit = 1, 8th bit = 0)
     if ( (iChar & 0xC0) != 0x40) {
+      strCipherText += " ";
       continue;
     }
+
 
 
     //set bits 6,7,8 to 0  
     //0x1F = 0001 1111
     iLetterPosition = iChar & 0x1F;
-    console.log("c, position: " + c + ": " + iLetterPosition);
+//    console.log("c, position: " + c + ": " + iLetterPosition);
+
+    //skip if not a valid letter
+    if (iLetterPosition > 26 || iLetterPosition < 1) {
+      strCipherText += " ";
+      continue;
+    }
 
     //get the new letter position
-    iNewLetterPosition = (iLetterPosition + iShift) % 26;
-   
+    iNewLetterPosition = iLetterPosition + iShift;
+    if (iNewLetterPosition > 26) {
+      iNewLetterPosition = (iNewLetterPosition % 26);
+    } 
 
     //Convert letter position back to ASCII character by setting 7th bit to 1
     //7th bit: 0x40 = 0100 0000
@@ -60,6 +76,33 @@ function caesarCipher(strPlainText, iShift) {
   return strCipherText;
 }
 
-//base64Encode("hello");
-console.log(makeUppercase("aAHelloWorld"));
-console.log(caesarCipher("aAHello, WorldzZ!!", 1));
+function main() {
+  args = process.argv;
+  switch (args[2]) {
+    case "upper":
+      str = makeUppercase(args[3]);
+      console.log(str);
+      break;
+    case "caesar":
+      str = caesarCipher(args[3], args[4]);
+      console.log(str);
+      break;
+    default:
+      console.log("Invalid option");
+      showUsage(); 
+  }
+}
+
+function showUsage() {
+  console.log("Usage:");
+  console.log("node encrypt.js upper <text>");
+  console.log("node encrypt.js caesar <text> <shift>");
+
+
+}
+
+
+//console.log(makeUppercase("aAHelloWorld"));
+//console.log(caesarCipher("aAHello, WorldzZ!!", 1));
+main();
+
