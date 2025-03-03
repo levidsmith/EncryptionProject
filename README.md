@@ -4,4 +4,3 @@ Encryption Project
 Rewrite of my Encryption Project Java applet that I wrote while at Georgia Tech. 
 Currently works with node.js Javascript runtime on Ubuntu
 
-test update
