@@ -2,8 +2,45 @@
  * encrypt.js - 2025 Levi D. Smith
  */
 
-function base64Encode(strPlainText) {
-  console.log(strPlainText);
+function getBase64(strPlainText) {
+  strCipherText = "";
+//  console.log(strPlainText);
+  console.log("Work in progress");
+
+  j = 0;
+  while (j + 3 < strPlainText.length) {
+    var dec = strPlainText.charCodeAt(j + 0) * Math.pow(256, 2) + 
+              strPlainText.charCodeAt(j + 1) * Math.pow(256, 1) + 
+              strPlainText.charCodeAt(j + 2) * Math.pow(256, 0); 
+    var octal = dec.toString(8);
+
+    i = 0;
+    while (i < 8) {
+      o1 = octal.substring(i, i + 2);
+      d1 = parseInt(o1, 8)
+      strCipherText += base64Conv(parseInt(d1));
+      i += 2;
+    } 
+ 
+    j += 3;
+  }
+
+  return strCipherText;
+
+}
+
+function base64Conv(iVal) {
+  if (iVal >= 0 && iVal < 26) {
+    return String.fromCharCode(65 + iVal);
+  } else if (iVal < 52) {
+    return String.fromCharCode(97 + iVal - 26);
+  } else if (iVal < 62) {
+    return String.fromCharCode(48 + iVal - 52);
+  } else if (iVal == 62) {
+    return "+";
+  } else if (iVal == 63) {
+    return "/";
+  }
 }
 
 function makeUppercase(strPlainText) {
@@ -182,6 +219,10 @@ function main() {
       str = getColumnarTransposition(args[3], args[4]);
       console.log(str);
       break;
+    case "base64":
+      str = getBase64(args[3]);
+      console.log(str);
+      break;
     default:
       console.log("Invalid option");
       showUsage(); 
@@ -194,6 +235,8 @@ function showUsage() {
   console.log("node encrypt.js caesar <text> <shift>");
   console.log("node encrypt.js ascii <text> ");
   console.log("node encrypt.js letterposition <text> ");
+  console.log("node encrypt.js columnartransposition <text> ");
+  console.log("node encrypt.js base64 <text> ");
 
 
 }
